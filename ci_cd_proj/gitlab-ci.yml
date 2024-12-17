@@ -1,0 +1,60 @@
+stages:
+  - style
+  - build
+  - test
+  - deploy
+
+style-job:
+  stage: style 
+  tags:
+    - style
+  script:
+    - clang-format -style=Google -n -Werror src/cat/*.c src/cat/*.h
+    - clang-format -style=Google -n -Werror src/grep/*.c src/grep/*.h
+  only:
+      - develop
+
+build-job:
+  stage: build
+  tags:
+    - build
+  script:
+    - cd src/cat && make s21_cat && cd ./../grep && make s21_grep
+  artifacts:
+    paths:
+      - src/cat/s21_cat
+      - src/grep/s21_grep
+    expire_in: 30 days
+  only:
+      - develop
+
+test-job:
+  stage: test 
+  tags:
+    - test 
+  script:
+    - cd src/cat/
+    - ls
+    - ./cat_test_script.sh
+    - cd ./../grep
+    - ls
+    - ./grep_test_script.sh
+  #after_script:
+    #- cd ./../../ 
+  only:
+      - develop
+
+deploy-job:
+  stage: deploy
+  tags:
+    - deploy
+  when: manual
+  script:
+    - cd src 
+    - ./deploy.sh
+    #- scp ./src/cat/s21_cat desirema@192.168.100.10:~/
+    #- scp ./src/grep/s21_grep desirema@192.168.100.10:~/
+    #- ssh desirema@192.168.100.10 "sudo mv s21_cat s21_grep /usr/local/bin"
+  only:
+      - develop
+

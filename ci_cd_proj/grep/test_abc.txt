@@ -1,0 +1,7 @@
+abcm 123 acb 456 bac
+abcdf abc cdf
+number: 123456
+abc aBc AbC
+12-12-12
+1234-123-123
+abnnnnab nn n bnnnb
